@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  tasker:
+    build: ./tasker
+    image: tasker:alpha01
+    container_name: tasker
+    restart: on-failure
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - "./tasker/:/tasker/"
+    ports:
+      - 8000:8000
+    env_file:
+      - env.container
+
+  redis:
+    image: redis:latest
+    container_name: redis
+
+  celery:
+    build: ./celery
+    volumes:
+      - "./celery/:/celery/"
+    container_name: celery
+    command: celery -A tasks worker --loglevel=INFO -B
+    links:
+      - redis
+    env_file:
+      - env.container
