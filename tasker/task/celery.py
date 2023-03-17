@@ -3,12 +3,13 @@ import requests
 import json
 import os
 
-REDIS_HOST = os.environ["REDIS_HOST"]
-REDIS_PORT = os.environ["REDIS_PORT"]
-API = os.environ['API']
+API = os.environ["API"]
 
-redis_url = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-app = Celery("tasks", broker=redis_url, backend=redis_url)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tasker.settings")
+
+app = Celery("tasker")
+app.config_from_object("django.conf:settings", namespace="CELERY")
+app.autodiscover_tasks()
 
 
 @app.task
@@ -34,6 +35,6 @@ def sum_numbers_API():
 
 
 app.conf.beat_schedule = {
-    "sum_numbers_API": {"task": "tasks.sum_numbers_API", "schedule": 15.0}
+    "sum_numbers_API": {"task": "task.celery.sum_numbers_API", "schedule": 15.0}
 }
 app.conf.timezone = "UTC"

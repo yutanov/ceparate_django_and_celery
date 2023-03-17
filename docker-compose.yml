@@ -19,12 +19,13 @@ services:
     container_name: redis
 
   celery:
-    build: ./celery
+    build: ./tasker
     volumes:
-      - "./celery/:/celery/"
+      - "./tasker/:/tasker/"
     container_name: celery
-    command: celery -A tasks worker --loglevel=INFO -B
-    links:
-      - redis
+    restart: on-failure
+    command: celery -A task worker --loglevel=INFO -B
+    depends_on:
+      - tasker
     env_file:
       - env.container

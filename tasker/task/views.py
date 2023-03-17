@@ -10,7 +10,7 @@ from .models import NumbersSum
 from .forms import NumbersSumForm
 from .serializers import NumbersSumSerializer
 
-API = os.environ['API']
+API = os.environ["API"]
 
 
 def index(request):
