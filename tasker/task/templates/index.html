@@ -7,13 +7,10 @@
 
 {% block content %}
     <div class="container">
-        <h1>Демо тест независимой работы Django и Celery</h1>
-        <form method="post" action="">
+        <h1>Ассинхронная проверка файла в Celery</h1>
+        <form class="form-control" method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
-            <label for="number_one">Первое число:</label><br>
-            <input type="number" id="number_one" name="number_one" required><br>
-            <label for="number_two">Второе число:</label><br>
-            <input type="number" id="number_two" name="number_two" required><br>
+            {{ form.as_p }}
             <button class="btn btn-outline-success mt-2" type="submit">Отправить</button>
         </form>
         {% if messages %}
@@ -23,31 +20,45 @@
             {% endfor %}
         {% endif %}
 
-        <div class="mt-2">
-            <a href="{% url 'truncate' %}" type="button" class="btn btn-danger" onclick="return confirm('Вы действительно хотите удалить все записи из таблицы?');">Обнулить таблицу</a>
-        </div>
-
         <hr>
-        <strong>Ранее отправленные записи и результаты их вычислений</strong><br>
-        {% if records %}
+        <strong>Ранее отправленные файлы и результаты их проверок</strong><br>
+        {% if tasks %}
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Первое число</th>
-                        <th scope="col">Второе число</th>
-                        <th scope="col">Сумма</th>
+                        <th scope="col">Task ID</th>
+                        <th scope="col">Название файла</th>
+                        <th scope="col">Создан</th>
+                        <th scope="col">Завершен</th>
+                        <th scope="col">Количество записей</th>
+                        <th scope="col">Результат</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for record in records %}
+                    {% for task in tasks %}
                     <tr>
-                        <td>{{ record.number_one }}</td>
-                        <td>{{ record.number_two }}</td>
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.filename }}</td>
+                        <td>{{ task.created_at }}</td>
                         <td>
-                            {% if record.number_sum %}
-                                {{ record.number_sum }}
+                            {% if task.finished_at %}
+                                {{ task.finished_at }}
                             {% else %}
-                                <p>?</p>
+                                <p style="color:red">Обрабатывается</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.n_rows %}
+                                {{ task.n_rows }}
+                            {% else %}
+                                <p style="color:red">Обрабатывается</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if task.result %}
+                                {{ task.result }}
+                            {% else %}
+                                <p style="color:red">Обрабатывается</p>
                             {% endif %}
                         </td>
                     </tr>

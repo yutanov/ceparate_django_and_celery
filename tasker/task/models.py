@@ -1,7 +1,9 @@
 from django.db import models
 
 
-class NumbersSum(models.Model):
-    number_one = models.IntegerField(blank=False)
-    number_two = models.IntegerField(blank=False)
-    number_sum = models.IntegerField(blank=True, null=True)
+class AsyncResults(models.Model):
+    filename = models.CharField(max_length=120, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now=False)
+    n_rows = models.IntegerField(null=True)
+    finished_at = models.DateTimeField(auto_now=False, null=True)
+    result = models.CharField(max_length=120, blank=False)

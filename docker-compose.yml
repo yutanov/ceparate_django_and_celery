@@ -24,7 +24,7 @@ services:
       - "./tasker/:/tasker/"
     container_name: celery
     restart: on-failure
-    command: celery -A task worker --loglevel=INFO -B
+    command: celery -A tasker worker --loglevel=INFO
     depends_on:
       - tasker
     env_file:
